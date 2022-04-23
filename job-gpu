@@ -1,0 +1,15 @@
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -p GPU-shared
+#SBATCH -t 00:30:00
+#SBATCH --gres=gpu:2
+
+source ~/.bashrc
+conda activate nums
+# cd /jet/home/parkb/nums-gpu-benchmarks
+# python3 bench.py
+cd /jet/home/parkb/nums/tests
+python3 test_gpu.py
+nsys profile --stats=true -t nvtx,cuda python3 test_gpu.py
+
