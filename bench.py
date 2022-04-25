@@ -1,3 +1,4 @@
+from mlp import run_test
 import nums
 from nums import numpy as nps
 from nums.core import settings
@@ -17,7 +18,7 @@ settings.device_grid_name = "packed"
 
 ### GLOBAL VARIABLES
 MEMORY = 16e9 # IN GIGABYTES
-NODES = 4# int(os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read())
+NODES = 1# int(os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read())
 print("Nodes:", NODES)
 TOTAL_MEMORY = NODES * MEMORY
 THEORETICAL_PEAK_64 = (7.8 * 10 ** 12) * NODES
@@ -73,12 +74,12 @@ def run_nums(backend_name, mode, ns, dtype=None):
             # Ex: dtype=nps.float32 passed into run_nums()
             A = A.astype(dtype)
             B = B.astype(dtype)
-            
-        A.touch()
-        B.touch()
-        print("Total memory to be used:", A.nbytes * 3)
-        print("Total memory estimated usage: {} %".format((A.nbytes * 3) / TOTAL_MEMORY))
-        print(A.shape, A.grid_shape, A.block_shape)
+        if mode != 'mlp':    
+            A.touch()
+            B.touch()
+            print("Total memory to be used:", A.nbytes * 3)
+            print("Total memory estimated usage: {} %".format((A.nbytes * 3) / TOTAL_MEMORY))
+            print(A.shape, A.grid_shape, A.block_shape)
 
         times = []
         flops = []
@@ -101,6 +102,14 @@ def run_nums(backend_name, mode, ns, dtype=None):
                 print(end - begin)
                 times.append(end - begin)
                 flops.append(elementwise_flops(n) / (end - begin))
+            elif mode == 'mlp':
+                begin = time.time()
+                run_test(n)
+                # C.touch()
+                end = time.time()
+                print(end - begin)
+                times.append(end - begin)
+                flops.append(elementwise_flops(n) / (end - begin))
 
         # Throw away the first five results due to CuPy's Context initialization
         # More here: https://docs.cupy.dev/en/stable/user_guide/performance.html
@@ -115,7 +124,8 @@ def run_nums(backend_name, mode, ns, dtype=None):
         
         writer.writerow([n, avg_time, avg_flops])
 
-        del A, B, C
+        if mode != 'mlp':
+            del A, B, C
 
 def run_cupy(mode, ns, dtype=None):
     cp_avg_times = []
@@ -131,7 +141,7 @@ def run_cupy(mode, ns, dtype=None):
         if mode == "matmul":
             A = cp.random.rand(n, n, dtype=dtype)
             B = cp.random.rand(n, n, dtype=dtype)
-        elif mode == "elementwise":
+        elif mode == "elementwise" or mode == "mlp":
             A = cp.random.rand(n, dtype=dtype)
             B = cp.random.rand(n, dtype=dtype)
        
@@ -163,6 +173,14 @@ def run_cupy(mode, ns, dtype=None):
                 print(end - begin)
                 times.append(end - begin)
                 flops.append(elementwise_flops(n) / (end - begin))
+            elif mode == 'mlp':
+                begin = time.time()
+                run_test(n)
+                # C.device.synchronize()
+                end = time.time()
+                print(end - begin)
+                times.append(end - begin)
+                flops.append(elementwise_flops(n) / (end - begin))
 
         # Throw away the first five results due to CuPy's Context initialization
         # More here: https://docs.cupy.dev/en/stable/user_guide/performance.html
@@ -178,7 +196,9 @@ def run_cupy(mode, ns, dtype=None):
 
         writer.writerow([n, avg_time, avg_flops])
 
-        del A, B, C
+        del A, B
+        if mode != 'mlp':
+            del C
     
     # cp_avg_flops = [flops(n) / (time * 10 ** 9) for n,time in zip(ns, cp_avg_times)]
     # avg_flops = [flops(n) / (time * 10 ** 9) for n, time in zip(ns_big, avg_times)]
@@ -200,20 +220,22 @@ def run_cupy(mode, ns, dtype=None):
 
     # plt.clf()
 
-    # plt.plot(ns_big, avg_times, label="NumS (8 V100s)")
-    # plt.plot(ns, cp_avg_times, label="CuPy Single Node")
-    # plt.legend()
-    # plt.savefig("test.png")
+    plt.plot(ns_big, avg_times, label="NumS (2 V100s)")
+    plt.plot(ns, cp_avg_times, label="CuPy Single Node")
+    plt.legend()
+    plt.savefig("test.png")
 
 
 if __name__ == "__main__":
     ns = [1024, 2048, 4096, 8192, 16384] # This is waht single node can handle
     ns_big = ns + [32768]
-    run_nums("gpu-intra", "matmul", ns_big)
-    run_cupy("matmul", ns)
+    # run_nums("gpu-intra", "matmul", ns_big)
+    # run_cupy("matmul", ns)
     # ns = [1 * 10 ** 8, 2 * 10 ** 8, 3 * 10 ** 8, 4 * 10 ** 8, 5 * 10 ** 8]
     # ns_big = ns + [6 * 10 ** 8, 7 * 10 ** 8, 8 * 10 ** 8, 9 * 10 ** 8, 10 ** 9]
     # run_nums("gpu-intra", "elementwise", ns_big)
     # run_cupy("elementwise", ns)
+    # run_cupy("mlp", ns_big)
+    run_nums("gpu", "mlp", ns_big)
      
     

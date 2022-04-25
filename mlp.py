@@ -4,12 +4,12 @@ from nums.core import settings
 import math
 import numpy as np
 
-settings.backend_name = "gpu"
-settings.device_grid_name = "packed"
-nums.init()
+# settings.backend_name = "gpu"
+# settings.device_grid_name = "packed"
+# nums.init()
 
-rand_arr1 = nps.random.rand(100, 100)
-rand_arr2 = nps.random.rand(100, 100)
+# rand_arr1 = nps.random.rand(100, 100)
+# rand_arr2 = nps.random.rand(100, 100)
 
 # print((rand_arr1 + rand_arr2).get())
 
@@ -81,7 +81,8 @@ class Dense(Layer):
         f(x) = <W*x> + b
         """
         self.learning_rate = learning_rate
-        self.weights = nps.random.randn(input_units,output_units) / math.sqrt(2/(input_units+output_units))
+        self.weights = nps.random.randn(input_units,output_units)# * math.sqrt(2/(input_units+output_units))
+        # print(self.weights)
         self.biases = nps.zeros(output_units)
         
     def forward(self,input):
@@ -118,14 +119,19 @@ class Dense(Layer):
 def softmax_crossentropy_with_logits(logits,reference_answers):
     """Compute crossentropy from logits[batch,n_classes] and ids of correct answers"""
     # logits_for_answers = logits[nps.arange(logits.shape[0]), reference_answers]
-    logits_for_answers = nps.array(logits.get()[np.arange(logits.shape[0]), reference_answers.get()])
-    #  [:logits.shape[0], reference_answers]
-    # logits_for_answers = logits_for_answers[reference_answers]
-    print(logits)
-    xentropy = - logits_for_answers
-    xentropy += nps.log(nps.sum(nps.exp(logits), axis=1))
-    print(logits_for_answers)
-    return xentropy
+    # print(logits, logits.shape)
+    sigmoid  = 1./(1. + nps.exp(-logits))
+
+    # logits_for_answers = nps.array(logits.get()[np.arange(logits.shape[0]), reference_answers.get()])
+    # #  [:logits.shape[0], reference_answers]
+    # # logits_for_answers = logits_for_answers[reference_answers]
+    # # print(logits)
+    # xentropy = - logits_for_answers
+    # xentropy += nps.log(nps.sum(nps.exp(logits), axis=1))
+    y = reference_answers
+    xentropy = y*nps.log(sigmoid) + (1-y)*nps.log(1-sigmoid)
+    # # print(logits_for_answers)
+    return -nps.mean(xentropy, axis=0)
 
 def mse(logits, reference_answers):
     return nps.mean((logits - reference_answers)**2)
@@ -135,15 +141,24 @@ def grad_mse(logits, reference_answers):
 
 def grad_softmax_crossentropy_with_logits(logits,reference_answers):
     """Compute crossentropy gradient from logits[batch,n_classes] and ids of correct answers"""
-    ones_for_answers = nps.zeros_like(logits)
+    # ones_for_answers = nps.zeros_like(logits)
 
-    ones_for_answers.get()[np.arange(logits.shape[0]),reference_answers.get()] = 1
+    # ones_for_answers.get()[np.arange(logits.shape[0]),reference_answers.get()] = 1
 
-    ones_for_answers = nps.array(ones_for_answers)
+    # ones_for_answers = nps.array(ones_for_answers)
 
-    softmax = nps.exp(logits) / nps.sum(nps.exp(logits), axis=-1,keepdims=True)
+    # softmax = nps.exp(logits) / nps.sum(nps.exp(logits), axis=-1,keepdims=True)
     
-    return (- ones_for_answers + softmax) / logits.shape[0]
+    # return (- ones_for_answers + softmax) / logits.shape[0]
+    sigmoid  = 1./(1. + nps.exp(-logits))
+    z, y = sigmoid, reference_answers
+    # return nps.sum(z - y)# / (z*(1-z))
+    # return (1. / logits.shape[0])*(z - y)
+    n = logits.shape[0]
+    frac = 1./n
+    fracy = nps.multiply(y, nps.full(y.shape, frac))
+    fracz = nps.multiply(z, nps.full(z.shape, frac))
+    return (fracz - fracy)
 
 def forward(network, X):
     """
@@ -167,13 +182,15 @@ def predict(network,X):
     Compute network predictions. Returning indices of largest Logit probability
     """
     logits = forward(network,X)[-1]
-    print(logits.shape)
-    res = []
-    for i in range(logits.shape[0]):
-        res.append(nps.argmax(logits[i]).get())
+    sigmoid  = 1./(1. + nps.exp(-logits))
+    return sigmoid > 0.5
+    # print(logits.shape)
+    # res = []
+    # for i in range(logits.shape[0]):
+    #     res.append(nps.argmax(logits[i]).get())
     
         
-    return nps.array(res)
+    # return nps.array(res)
 
     # return nps.argmax(logits, axis=-1)
 
@@ -194,7 +211,7 @@ def train(network,X,y):
     loss = softmax_crossentropy_with_logits(logits,y)
     loss_grad = grad_softmax_crossentropy_with_logits(logits,y)
     # print(loss_grad)
-
+    # print(loss, loss_grad)
     # loss = mse(logits, y)
     # loss_grad = grad_mse(logits, y)
     
@@ -205,7 +222,8 @@ def train(network,X,y):
         
         loss_grad = layer.backward(layer_inputs[layer_index],loss_grad) #grad w.r.t. input, also weight updates
         
-    return nps.mean(loss)
+    # return nps.mean(loss)
+    return loss
 
 def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
     assert inputs.shape[0] == targets.shape[0]
@@ -220,14 +238,16 @@ def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
 
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
-def load_dataset(flatten=False):
-    X, y = load_digits(return_X_y=True)
+def load_dataset(n, flatten=False):
+    # X, y = load_digits(return_X_y=True)
+    X = np.random.rand(n, 10)
+    y = np.random.choice([0, 1], size=(n, 1))
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.33, random_state=42)
     # normalize x
     X_train, X_val, y_train, y_val = nps.array(X_train), nps.array(X_val), nps.array(y_train), nps.array(y_val)
 
-    X_train = X_train.astype(float) / 255.
-    X_val = X_val.astype(float) / 255.
+    X_train = X_train.astype(float)# / 255.
+    X_val = X_val.astype(float)# / 255.
 
     # we reserve the last 10000 training examples for validation
     # X_train, X_val = X_train[:-10000], X_train[-10000:]
@@ -242,26 +262,29 @@ def load_dataset(flatten=False):
 
 
 
-def main():
-    X_train, y_train, X_val, y_val = load_dataset(flatten=True)
+def main(n):
+    X_train, y_train, X_val, y_val = load_dataset(n, flatten=True)
     network = []
     network.append(Dense(X_train.shape[1],100))
     network.append(ReLU())
     network.append(Dense(100,200))
     network.append(ReLU())
-    # network.append(Dense(200,1))
-    network.append(Dense(200,10))
+    network.append(Dense(200,1))
+    # network.append(Dense(200,10))
     train_log = []
     val_log = []
     x_batch, y_batch = X_train, y_train
-    for epoch in range(25):
+    for epoch in range(500):
         # for x_batch,y_batch in iterate_minibatches(X_train,y_train,batchsize=32,shuffle=True):
         
         loss = train(network,x_batch,y_batch)
-        print("Loss: ", loss)
+        # print("Loss: ", loss)
         
-    train_log.append(nps.mean(predict(network,X_train)==y_train))
-    val_log.append(nps.mean(predict(network,X_val)==y_val))
+    # train_log.append(nps.mean(predict(network,X_train)==y_train))
+    # val_log.append(nps.mean(predict(network,X_val)==y_val))
+    train_log.append(np.mean(predict(network,X_train).get()==y_train.get()))
+    val_log.append(np.mean(predict(network,X_val).get()==y_val.get()))
+    # print(train_log, val_log)
     
     # clear_output()
     # print("Epoch",epoch)
@@ -273,7 +296,9 @@ def main():
     # plt.grid()
     # plt.show()
     
-    
+def run_test(n):
+    np.random.seed(267)
+    main(n)    
 
 if __name__ == "__main__":
     main()
