@@ -1,121 +1,0 @@
-gpu-intra
-(0, 0) Device(node_id=0, node_addr='gpu:0000:16:00.0', device_type='gpu', device=0)
-(1, 0) Device(node_id=1, node_addr='gpu:0000:3A:00.0', device_type='gpu', device=0)
-device_grid (2, 1)
-(2,) (500000000,)
-0.8461019992828369
-0.49648141860961914
-0.49645066261291504
-0.49466562271118164
-0.4960951805114746
-0.49660325050354004
-0.4969501495361328
-0.4955735206604004
-0.49618077278137207
-0.4969215393066406
-False
-Collecting data...
-gpu-intra
-(0, 0) Device(node_id=0, node_addr='gpu:0000:16:00.0', device_type='gpu', device=0)
-(1, 0) Device(node_id=1, node_addr='gpu:0000:3A:00.0', device_type='gpu', device=0)
-device_grid (2, 1)
-(2,) (500000000,)
-0.6046257019042969
-0.49700140953063965
-0.49656248092651367
-0.4963557720184326
-0.49638843536376953
-0.495574951171875
-0.49590134620666504
-0.49652791023254395
-0.4967949390411377
-0.4965207576751709
-False
-Processing events...
-Capturing symbol files...
-Saving temporary "/tmp/nsys-report-1e31-319a-abfe-8adc.qdstrm" file to disk...
-Creating final output files...
-
-Processing [0%                                                                ]Processing [1%                                                                ]Processing [2%                                                                ]Processing [3%                                                                ]Processing [=5%                                                               ]Processing [==7%                                                              ]Processing [===9%                                                             ]Processing [====11%                                                           ]Processing [=====13%                                                          ]Processing [======15%                                                         ]Processing [========17%                                                       ]Processing [=========19%                                                      ]Processing [==========21%                                                     ]Processing [===========22%                                                    ]Processing [============24%                                                   ]Processing [==============27%                                                 ]Processing [===============28%                                                ]Processing [================30%                                               ]Processing [==================33%                                             ]Processing [===================34%                                            ]Processing [====================35%                                           ]Processing [====================36%                                           ]Processing [=====================37%                                          ]Processing [======================38%                                         ]Processing [======================39%                                         ]Processing [=======================40%                                        ]Processing [========================41%                                       ]Processing [========================42%                                       ]Processing [=========================43%                                      ]Processing [==========================44%                                     ]Processing [==========================45%                                     ]Processing [===========================46%                                    ]Processing [============================47%                                   ]Processing [============================48%                                   ]Processing [=============================49%                                  ]Processing [==============================51%                                 ]Processing [===============================52%                                ]Processing [===============================53%                                ]Processing [================================54%                               ]Processing [=================================55%                              ]Processing [=================================56%                              ]Processing [==================================57%                             ]Processing [===================================59%                            ]Processing [=====================================61%                          ]Processing [=====================================62%                          ]Processing [=======================================64%                        ]Processing [========================================66%                       ]Processing [=========================================67%                      ]Processing [==========================================69%                     ]Processing [===========================================70%                    ]Processing [============================================72%                   ]Processing [=============================================74%                  ]Processing [==============================================75%                 ]Processing [===============================================77%                ]Processing [=================================================79%              ]Processing [=================================================80%              ]Processing [===================================================82%            ]Processing [===================================================83%            ]Processing [====================================================84%           ]Processing [=====================================================86%          ]Processing [=======================================================88%        ]Processing [=======================================================89%        ]Processing [=========================================================91%      ]Processing [==========================================================93%     ]Processing [===========================================================94%    ]Processing [============================================================96%   ]Processing [=============================================================97%  ]Processing [==============================================================99% ]Processing [==============================================================100%]Processing [==============================================================100%]
-Saved report file to "/tmp/nsys-report-1e31-319a-abfe-8adc.qdrep"
-Exporting 151908 events: [1%                                                  ]Exporting 151908 events: [2%                                                  ]Exporting 151908 events: [3%                                                  ]Exporting 151908 events: [4%                                                  ]Exporting 151908 events: [5%                                                  ]Exporting 151908 events: [=6%                                                 ]Exporting 151908 events: [=7%                                                 ]Exporting 151908 events: [==8%                                                ]Exporting 151908 events: [==9%                                                ]Exporting 151908 events: [==10%                                               ]Exporting 151908 events: [==11%                                               ]Exporting 151908 events: [===12%                                              ]Exporting 151908 events: [===13%                                              ]Exporting 151908 events: [====14%                                             ]Exporting 151908 events: [====15%                                             ]Exporting 151908 events: [=====16%                                            ]Exporting 151908 events: [=====17%                                            ]Exporting 151908 events: [======18%                                           ]Exporting 151908 events: [======19%                                           ]Exporting 151908 events: [=======20%                                          ]Exporting 151908 events: [=======21%                                          ]Exporting 151908 events: [========22%                                         ]Exporting 151908 events: [========23%                                         ]Exporting 151908 events: [=========24%                                        ]Exporting 151908 events: [==========25%                                       ]Exporting 151908 events: [==========26%                                       ]Exporting 151908 events: [===========27%                                      ]Exporting 151908 events: [===========28%                                      ]Exporting 151908 events: [============29%                                     ]Exporting 151908 events: [============30%                                     ]Exporting 151908 events: [=============31%                                    ]Exporting 151908 events: [=============32%                                    ]Exporting 151908 events: [==============33%                                   ]Exporting 151908 events: [==============34%                                   ]Exporting 151908 events: [===============35%                                  ]Exporting 151908 events: [===============36%                                  ]Exporting 151908 events: [================37%                                 ]Exporting 151908 events: [================38%                                 ]Exporting 151908 events: [=================39%                                ]Exporting 151908 events: [=================40%                                ]Exporting 151908 events: [==================41%                               ]Exporting 151908 events: [==================42%                               ]Exporting 151908 events: [===================43%                              ]Exporting 151908 events: [===================44%                              ]Exporting 151908 events: [====================45%                             ]Exporting 151908 events: [====================46%                             ]Exporting 151908 events: [=====================47%                            ]Exporting 151908 events: [=====================48%                            ]Exporting 151908 events: [======================49%                           ]Exporting 151908 events: [=======================50%                          ]Exporting 151908 events: [=======================51%                          ]Exporting 151908 events: [========================52%                         ]Exporting 151908 events: [========================53%                         ]Exporting 151908 events: [=========================54%                        ]Exporting 151908 events: [=========================55%                        ]Exporting 151908 events: [==========================56%                       ]Exporting 151908 events: [==========================57%                       ]Exporting 151908 events: [===========================58%                      ]Exporting 151908 events: [===========================59%                      ]Exporting 151908 events: [============================60%                     ]Exporting 151908 events: [============================61%                     ]Exporting 151908 events: [=============================62%                    ]Exporting 151908 events: [=============================63%                    ]Exporting 151908 events: [==============================64%                   ]Exporting 151908 events: [==============================65%                   ]Exporting 151908 events: [===============================66%                  ]Exporting 151908 events: [===============================67%                  ]Exporting 151908 events: [================================68%                 ]Exporting 151908 events: [================================69%                 ]Exporting 151908 events: [=================================70%                ]Exporting 151908 events: [=================================71%                ]Exporting 151908 events: [==================================72%               ]Exporting 151908 events: [==================================73%               ]Exporting 151908 events: [===================================74%              ]Exporting 151908 events: [====================================75%             ]Exporting 151908 events: [====================================76%             ]Exporting 151908 events: [=====================================77%            ]Exporting 151908 events: [=====================================78%            ]Exporting 151908 events: [======================================79%           ]Exporting 151908 events: [======================================80%           ]Exporting 151908 events: [=======================================81%          ]Exporting 151908 events: [=======================================82%          ]Exporting 151908 events: [========================================83%         ]Exporting 151908 events: [========================================84%         ]Exporting 151908 events: [=========================================85%        ]Exporting 151908 events: [=========================================86%        ]Exporting 151908 events: [==========================================87%       ]Exporting 151908 events: [==========================================88%       ]Exporting 151908 events: [===========================================89%      ]Exporting 151908 events: [===========================================90%      ]Exporting 151908 events: [============================================91%     ]Exporting 151908 events: [============================================92%     ]Exporting 151908 events: [=============================================93%    ]Exporting 151908 events: [=============================================94%    ]Exporting 151908 events: [==============================================95%   ]Exporting 151908 events: [==============================================96%   ]Exporting 151908 events: [===============================================97%  ]Exporting 151908 events: [===============================================98%  ]Exporting 151908 events: [================================================99% ]Exporting 151908 events: [================================================100%]
-
-Exported successfully to
-/tmp/nsys-report-1e31-319a-abfe-8adc.sqlite
-
-Generating CUDA API Statistics...
-CUDA API Statistics (nanoseconds)
-
-Time(%)      Total Time       Calls         Average         Minimum         Maximum  Name                                                                            
--------  --------------  ----------  --------------  --------------  --------------  --------------------------------------------------------------------------------
-   39.6      5739934555          48     119581969.9            1601       496152646  cudaDeviceSynchronize                                                           
-   38.7      5605861372          33     169874587.0            6330      1415214184  cudaMemcpy                                                                      
-   10.8      1562516899          11     142046990.8            4904      1551990465  cudaHostAlloc                                                                   
-    3.4       496956724          10      49695672.4           19914       496728478  cudaLaunchCooperativeKernelMultiDevice                                          
-    2.6       382199086           4      95549771.5             537       369026317  cudaFree                                                                        
-    2.6       373205271           6      62200878.5            4366       373177070  cudaEventCreateWithFlags                                                        
-    2.2       319313544          47       6793905.2            3326       145606340  cudaMalloc                                                                      
-    0.0          617329           3        205776.3          183217          232523  cuModuleLoadData                                                                
-    0.0          592476           2        296238.0          284610          307866  cuModuleUnload                                                                  
-    0.0          358210          30         11940.3            6171           27890  cuLaunchKernel                                                                  
-    0.0          317593          36          8822.0            2446           34870  cudaMemset                                                                      
-    0.0          145189          10         14518.9            8656           29323  cudaMemsetAsync                                                                 
-    0.0          114590           4         28647.5           27209           30489  cudaMemcpyAsync                                                                 
-    0.0          107332           2         53666.0           40005           67327  cudaMemGetInfo                                                                  
-    0.0           68207          44          1550.2             494            5481  cudaEventRecord                                                                 
-    0.0           56619          40          1415.5             551           16542  cudaStreamWaitEvent                                                             
-    0.0           38277           7          5468.1            3371            8969  cudaEventQuery                                                                  
-    0.0           34051           2         17025.5           14306           19745  cudaStreamCreateWithFlags                                                       
-    0.0           12987           3          4329.0            3847            5140  cudaEventDestroy                                                                
-    0.0            1788           1          1788.0            1788            1788  cuInit                                                                          
-
-
-
-
-Generating CUDA Kernel Statistics...
-CUDA Kernel Statistics (nanoseconds)
-
-Time(%)      Total Time   Instances         Average         Minimum         Maximum  Name                                                                                                                                                                                                                                                                                                                                         
--------  --------------  ----------  --------------  --------------  --------------  --------------------------------------------------------------------------------------------------------------------                                                                                                                                                                                                                         
-   95.0      9367825567          20     468391278.4       440071297       496518903  _tensordot_core_mul_sum                                                                                                                                                                                                                                                                                                                      
-    5.0       497403734          20      24870186.7           12896        56234749  ncclKernel_SendRecv_RING_SIMPLE_Sum_int8_t(ncclWorkElem)                                                                                                                                                                                                                                                                                     
-    0.0           17409          10          1740.9            1665            1952  cupy_add__float64_float64_float64                                                                                                                                                                                                                                                                                                            
-
-
-
-Generating CUDA Memory Operation Statistics...
-CUDA Memory Operation Statistics (nanoseconds)
-
-Time(%)      Total Time  Operations         Average         Minimum         Maximum  Name                                                                            
--------  --------------  ----------  --------------  --------------  --------------  --------------------------------------------------------------------------------
-   81.0      5602352125           5    1120470425.0            2208      1414611326  [CUDA memcpy DtoH]                                                              
-   19.0      1312663820          32      41020744.4            1248       328550084  [CUDA memcpy HtoD]                                                              
-    0.0          181408          46          3943.7            1247           16032  [CUDA memset]                                                                   
-
-
-CUDA Memory Operation Statistics (KiB)
-
-              Total      Operations              Average            Minimum              Maximum  Name                                                                            
--------------------  --------------  -------------------  -----------------  -------------------  --------------------------------------------------------------------------------
-          98314.219              46             2137.266              0.008            10240.000  [CUDA memset]                                                                   
-       15625006.141              32           488281.442              0.008          3906250.000  [CUDA memcpy HtoD]                                                              
-       15625000.008               5          3125000.002              0.008          3906250.000  [CUDA memcpy DtoH]                                                              
-
-
-
-
-Generating NVTX Push-Pop Range Statistics...
-NVTX Push-Pop Range Statistics (nanoseconds)
-
-Time(%)      Total Time   Instances         Average         Minimum         Maximum  Range                  
--------  --------------  ----------  --------------  --------------  --------------  -----------------------
-   52.5      1072508658          31      34597053.5              97       574954742  NCCL:ncclGroupEnd      
-   47.5       971169397           1     971169397.0       971169397       971169397  NCCL:ncclCommInitAll   
-    0.0          393745          10         39374.5             918          377555  NCCL:ncclRecv          
-    0.0           98108          31          3164.8              86           13515  NCCL:ncclGroupStart    
-    0.0           37179          10          3717.9            1681           12320  NCCL:ncclSend          
-
-
-
-Report file moved to "/jet/home/parkb/nums/tests/report7.qdrep"
-Report file moved to "/jet/home/parkb/nums/tests/report7.sqlite"
