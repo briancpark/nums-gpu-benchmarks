@@ -1,0 +1,8 @@
+__pycache__/
+
+# NVIDIA profiling files
+*.qdrep
+*.sqlite
+
+# Slurm logs
+*.out
