@@ -16,16 +16,24 @@ import csv
 
 settings.device_grid_name = "packed"
 
+os.environ["CUPY_TF32"] = "1"
+os.environ["CUPY_ACCELERATORS"] = "cub,cutensor"
+
+
 ### GLOBAL VARIABLES
 MEMORY = 16e9  # IN GIGABYTES
 NODES = int(
     os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read()
 )
 TOTAL_MEMORY = NODES * MEMORY
-THEORETICAL_PEAK_64 = (7.8 * 10**12) * NODES
-THEORETICAL_PEAK_32 = (15.7 * 10**12) * NODES
-THEORETICAL_PEAK_TENSOR = (125 * 10**12) * NODES
-THEORETICAL_PEAK_64_NO_FMA = 3916.8 * 10**9
+THEORETICAL_PEAK_64 = 7.8 * 10**12
+THEORETICAL_PEAK_32 = 15.7 * 10**12
+THEORETICAL_PEAK_TENSOR = 125 * 10**12
+THEORETICAL_PEAK_64_NO_FMA = 3.9168 * 10**12
+
+EMPIRICAL_PEAK_64 = 7.0689 * 10**12
+EMPIRICAL_PEAK_64_NO_FMA = 3.5358 * 10 ** 12
+ 
 
 KILO = float(10**3)
 MEGA = float(10**6)
@@ -62,11 +70,17 @@ def run_nums(backend_name, mode, ns, dtype=None):
     avg_times = []
 
     ### INITIALIZE LOGGER
-    t0 = nps.random.rand(1)
-    if dtype:
+    dtype_name = None
+    if "float" in dtype:
+        t0 = cp.random.rand(1)
         t0 = t0.astype(DTYPES[dtype])
+        dtype_name = t0.dtype.name
+    else:
+        t0 = cp.random.randint(0, 1, 1, dtype=DTYPES[dtype])
+        t0 = t0.astype(DTYPES[dtype])
+        dtype_name = t0.dtype.name
     fh = open(
-        "data/nums_" + mode + "_" + t0.dtype.__name__ + "_" + str(NODES) + "gpus.csv",
+        "data/nums_" + mode + "_" + dtype_name + "_" + str(NODES) + "gpus.csv",
         "w",
         newline="",
     )
@@ -78,17 +92,22 @@ def run_nums(backend_name, mode, ns, dtype=None):
         SEED += 1
         nps.random.seed(SEED)
         if mode == "matmul":
-            A = nps.random.rand(n, n)
-            B = nps.random.rand(n, n)
+            if "float" in dtype:
+                A = nps.random.rand(n, n)
+                B = nps.random.rand(n, n) 
+            else:
+                A = nps.random.randint(-n, n, (n, n))
+                B = nps.random.randint(-n, n, (n, n))
         elif mode == "elementwise":
-            A = nps.random.rand(n)
-            B = nps.random.rand(n)
+            if "float" in dtype:
+                A = nps.random.rand(n)
+                B = nps.random.rand(n)
+            else:
+                A = nps.random.randint(-n, n, (n))
+                B = nps.random.randint(-n, n, (n))
 
-        if dtype:
-            # Ex: dtype=nps.float32 passed into run_nums()
-            A = A.astype(DTYPES[dtype])
-            B = B.astype(DTYPES[dtype])
-
+        A = A.astype(DTYPES[dtype])
+        B = B.astype(DTYPES[dtype])
         A.touch()
         B.touch()
         print("Total memory to be used:", A.nbytes * 3)
@@ -138,9 +157,17 @@ def run_cupy(mode, ns, dtype=None):
     global SEED
 
     ### INITIALIZE LOGGER
-    t0 = cp.random.rand(1, dtype=DTYPES[dtype])
+    dtype_name = None
+    if "float" in dtype:
+        t0 = cp.random.rand(1)
+        t0 = t0.astype(DTYPES[dtype])
+        dtype_name = t0.dtype.name
+    else:
+        t0 = cp.random.randint(0, 1, 1)
+        t0 = t0.astype(DTYPES[dtype])
+        dtype_name = t0.dtype.name
     fh = open(
-        "data/cupy_" + mode + "_" + t0.dtype.base.name + "_" + str(NODES) + "gpus.csv",
+        "data/cupy_" + mode + "_" + dtype_name + "_" + str(NODES) + "gpus.csv",
         "w",
         newline="",
     )
@@ -152,11 +179,22 @@ def run_cupy(mode, ns, dtype=None):
         SEED += 1
         cp.random.seed(SEED)
         if mode == "matmul":
-            A = cp.random.rand(n, n, dtype=DTYPES[dtype])
-            B = cp.random.rand(n, n, dtype=DTYPES[dtype])
+            if "float" in dtype:
+                A = cp.random.rand(n, n)
+                B = cp.random.rand(n, n)
+            else:
+                A = cp.random.randint(-n, n, (n, n))
+                B = cp.random.randint(-n, n, (n, n))
         elif mode == "elementwise":
-            A = cp.random.rand(n, dtype=DTYPES[dtype])
-            B = cp.random.rand(n, dtype=DTYPES[dtype])
+            if "float" in dtype:
+                A = cp.random.rand(n)
+                B = cp.random.rand(n)
+            else:
+                A = cp.random.randint(-n, n, (n,))
+                B = cp.random.randint(-n, n, (n,))
+
+        A = A.astype(DTYPES[dtype])
+        B = B.astype(DTYPES[dtype])
 
         A.device.synchronize()
         B.device.synchronize()
@@ -214,13 +252,19 @@ if __name__ == "__main__":
     benchmark = sys.argv[2]
     dtype = sys.argv[3] 
 
-    t0 = cp.random.rand(1, dtype=DTYPES[dtype])
+    if "float" in dtype:
+        t0 = cp.random.rand(1)
+    else: 
+        t0 = cp.random.randint(1)
+
+        
+
     if package == "nums":
         backend = sys.argv[4]
 
     if benchmark == "matmul":
-        base_ns = list(range(4000, 32000 * int(8 / t0.nbytes), 2000))
-        ns_full = list(range(4000, 32000 * NODES * int(8 / t0.nbytes), 2000))
+        base_ns = list(range(4000, 32000, 2000))
+        ns_full = list(range(4000, 32000 * NODES, 2000))
         ns = []
         for n in ns_full:
             usage = (n ** 2) * 3 * t0.nbytes / TOTAL_MEMORY
@@ -229,8 +273,8 @@ if __name__ == "__main__":
         print("Percentage of GPU memory to be used", (ns[-1] ** 2) * 3 * t0.nbytes / TOTAL_MEMORY)
 
     elif benchmark == "elementwise":
-        base_ns = list(range(1 * 10 ** 8, 5 * int(8 / t0.nbytes) * 10 ** 8, 1 * 10 ** 8))
-        ns = list(range(1 * 10 ** 8, NODES * int(8 / t0.nbytes) * 5 * 10 ** 8, 1 * 10 ** 8))
+        base_ns = list(range(1 * 10 ** 8, 5 * 10 ** 8, 1 * 10 ** 8))
+        ns = list(range(1 * 10 ** 8, NODES * 5 * 10 ** 8, 1 * 10 ** 8))
         print("Percentage of GPU memory to be used", ns[-1] * 3 * t0.nbytes / TOTAL_MEMORY)
 
     if package == "nums":

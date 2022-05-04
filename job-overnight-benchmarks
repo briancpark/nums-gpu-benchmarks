@@ -2,8 +2,8 @@
 #SBATCH -N 1
 #SBATCH -n 1
 #SBATCH -p GPU-shared
-#SBATCH -t 01:00:00
-#SBATCH --gres=gpu:4
+#SBATCH -t 02:00:00
+#SBATCH --gres=gpu:1
 
 ### NOTES:
 # Change --gres=gpu:<num_gpus> to liking, script will automatically detect number of gpus
