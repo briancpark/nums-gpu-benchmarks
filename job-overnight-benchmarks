@@ -1,0 +1,73 @@
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH -p GPU-shared
+#SBATCH -t 01:00:00
+#SBATCH --gres=gpu:4
+
+### NOTES:
+# Change --gres=gpu:<num_gpus> to liking, script will automatically detect number of gpus
+# Change GPU-shared to GPU when scaling to more than 4 GPUs
+
+### Setup Environment
+source ~/.bashrc
+conda activate nums
+cd /jet/home/parkb/nums-gpu-benchmarks
+
+### Log Nvidia Environment
+nvidia-smi
+
+NUM_GPUS=$(nvidia-smi --query-gpu=name --format=csv,noheader | wc -l)
+
+### Matrix Multiply Benchmarks
+python3 bench.py nums matmul float64 gpu-intra
+sleep 5
+python3 bench.py nums matmul float32 gpu-intra
+sleep 5
+python3 bench.py nums matmul float16 gpu-intra
+sleep 5
+python3 bench.py nums matmul int64 gpu-intra
+sleep 5
+python3 bench.py nums matmul int32 gpu-intra
+sleep 5
+
+### Elementwise Benchmarks
+python3 bench.py nums elementwise float64 gpu-intra
+sleep 5
+python3 bench.py nums elementwise float32 gpu-intra
+sleep 5
+python3 bench.py nums elementwise float16 gpu-intra
+sleep 5
+python3 bench.py nums elementwise int64 gpu-intra
+sleep 5
+python3 bench.py nums elementwise int32 gpu-intra
+sleep 5
+
+### For 1 GPU, benchmark against CuPy
+if [[ $NUM_GPUS == 1 ]]
+then
+    ### Matrix Multiply Benchmarks
+    python3 bench.py cupy matmul float64
+    sleep 5
+    python3 bench.py cupy matmul float32
+    sleep 5
+    python3 bench.py cupy matmul float16
+    sleep 5
+    python3 bench.py cupy matmul int64
+    sleep 5
+    python3 bench.py cupy matmul int32
+    sleep 5
+    
+    ### Elementwise Benchmarks
+    python3 bench.py cupy elementwise float64
+    sleep 5
+    python3 bench.py cupy elementwise float32
+    sleep 5
+    python3 bench.py cupy elementwise float16
+    sleep 5
+    python3 bench.py cupy elementwise int64
+    sleep 5
+    python3 bench.py cupy elementwise int32
+    sleep 5
+fi
+
