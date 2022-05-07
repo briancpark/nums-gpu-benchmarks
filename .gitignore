@@ -3,6 +3,6 @@ __pycache__/
 # NVIDIA profiling files
 *.qdrep
 *.sqlite
-
+*.nsys-rep
 # Slurm logs
 *.out
