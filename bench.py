@@ -23,8 +23,7 @@ os.environ["CUPY_ACCELERATORS"] = "cub,cutensor"
 ### GLOBAL VARIABLES
 MEMORY = 16e9  # IN GIGABYTES
 NODES = int(
-    8
-    # os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read()
+    os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read()
 )
 TOTAL_MEMORY = NODES * MEMORY
 THEORETICAL_PEAK_64 = 7.8 * 10**12

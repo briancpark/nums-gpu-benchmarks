@@ -58,6 +58,11 @@ if __name__ == "__main__":
 
     print(EMPIRICAL_ELEMENTWISE / GIGA)
 
+    print(df_nums_1["flops"].max() / (EMPIRICAL_ELEMENTWISE * 1))
+    print(df_nums_2["flops"].max() / (EMPIRICAL_ELEMENTWISE * 2))
+    print(df_nums_4["flops"].max() / (EMPIRICAL_ELEMENTWISE * 4))
+    print(df_nums_8["flops"].max() / (EMPIRICAL_ELEMENTWISE * 8))
+
     df_cupy_mm = plotter(is_nums=False, mode="matmul", dtype="float64", num_gpus=1)
 
     df_nums_mm_1 = plotter(is_nums=True, mode="matmul", dtype="float64", num_gpus=1)
