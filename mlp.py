@@ -3,9 +3,14 @@ from nums import numpy as nps
 from nums.core import settings
 import math
 import numpy as np
+import pandas as pd
+import sys
+import time
+import csv
+from tqdm import tqdm
 
-# settings.backend_name = "gpu"
-# settings.device_grid_name = "packed"
+settings.device_grid_name = "packed"
+settings.backend_name = "gpu"
 # nums.init()
 
 # rand_arr1 = nps.random.rand(100, 100)
@@ -18,6 +23,9 @@ import numpy as np
 # z = x + y
 # print(z.get())
 
+training_times = []
+inference_times = []
+TRIALS = 1
 class Layer:
     """
     A building block. Each layer is capable of performing two things:
@@ -156,8 +164,11 @@ def grad_softmax_crossentropy_with_logits(logits,reference_answers):
     # return (1. / logits.shape[0])*(z - y)
     n = logits.shape[0]
     frac = 1./n
-    fracy = nps.multiply(y, nps.full(y.shape, frac))
-    fracz = nps.multiply(z, nps.full(z.shape, frac))
+    y_p = nps.ones(y.shape)
+    z_p = nps.ones(z.shape)
+    nps.ones(z.shape)
+    fracy = nps.multiply(y, y_p * frac)
+    fracz = nps.multiply(z, z_p * frac)
     return (fracz - fracy)
 
 def forward(network, X):
@@ -246,8 +257,8 @@ def load_dataset(n, flatten=False):
     # normalize x
     X_train, X_val, y_train, y_val = nps.array(X_train), nps.array(X_val), nps.array(y_train), nps.array(y_val)
 
-    X_train = X_train.astype(float)# / 255.
-    X_val = X_val.astype(float)# / 255.
+    # X_train = X_train.astype(float)# / 255.
+    # X_val = X_val.astype(float)# / 255.
 
     # we reserve the last 10000 training examples for validation
     # X_train, X_val = X_train[:-10000], X_train[-10000:]
@@ -263,27 +274,41 @@ def load_dataset(n, flatten=False):
 
 
 def main(n):
-    X_train, y_train, X_val, y_val = load_dataset(n, flatten=True)
-    network = []
-    network.append(Dense(X_train.shape[1],100))
-    network.append(ReLU())
-    network.append(Dense(100,200))
-    network.append(ReLU())
-    network.append(Dense(200,1))
-    # network.append(Dense(200,10))
-    train_log = []
-    val_log = []
-    x_batch, y_batch = X_train, y_train
-    for epoch in range(500):
-        # for x_batch,y_batch in iterate_minibatches(X_train,y_train,batchsize=32,shuffle=True):
-        
-        loss = train(network,x_batch,y_batch)
-        # print("Loss: ", loss)
-        
-    # train_log.append(nps.mean(predict(network,X_train)==y_train))
-    # val_log.append(nps.mean(predict(network,X_val)==y_val))
-    train_log.append(np.mean(predict(network,X_train).get()==y_train.get()))
-    val_log.append(np.mean(predict(network,X_val).get()==y_val.get()))
+    t_times = []
+    i_times = []
+    for trial in range(TRIALS):
+        print("running MLP for size {}".format(n))
+        X_train, y_train, X_val, y_val = load_dataset(n, flatten=True)
+        network = []
+        network.append(Dense(X_train.shape[1],100))
+        network.append(ReLU())
+        network.append(Dense(100,200))
+        network.append(ReLU())
+        network.append(Dense(200,1))
+        # network.append(Dense(200,10))
+        train_log = []
+        val_log = []
+        x_batch, y_batch = X_train, y_train
+        begin = time.time()
+        for epoch in tqdm(range(500)):
+            # for x_batch,y_batch in iterate_minibatches(X_train,y_train,batchsize=32,shuffle=True):
+            
+            loss = train(network,x_batch,y_batch)
+            # print("Loss: ", loss)
+        end = time.time()
+        print("Training time: ", end - begin)
+        t_times.append(end - begin)
+        # train_log.append(nps.mean(predict(network,X_train)==y_train))
+        # val_log.append(nps.mean(predict(network,X_val)==y_val))
+        begin = time.time()
+        # train_log.append(np.mean(predict(network,X_train).get()==y_train.get()))
+        val_log.append(np.mean(predict(network,X_val).get()==y_val.get()))
+        end = time.time()
+        print("Inference time: ", end-begin)
+        i_times.append(end-begin)
+
+    training_times.append(np.mean(t_times))
+    inference_times.append(np.mean(i_times))
     # print(train_log, val_log)
     
     # clear_output()
@@ -301,4 +326,16 @@ def run_test(n):
     main(n)    
 
 if __name__ == "__main__":
-    main()
+    ns = [100, 1000, 10000, 100000]
+    for n in ns:
+        run_test(n)
+
+    fh = open(
+        "data/nums_mlp_" + settings.backend_name + ".csv",
+        "w",
+        newline="",
+    )
+    writer = csv.writer(fh)
+    writer.writerow(["n", "training time", "inference time"])
+    for i in range(len(ns)):
+        writer.writerow([ns[i], training_times[i], inference_times[i]])
