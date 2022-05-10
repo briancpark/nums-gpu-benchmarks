@@ -12,7 +12,7 @@ import csv
 
 ### GLOBAL VARIABLES
 MEMORY = 16e9 # IN GIGABYTES
-NODES = 2# int(os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read())
+NODES = 1# int(os.popen("nvidia-smi --query-gpu=name --format=csv,noheader | wc -l").read())
 print("Nodes:", NODES)
 TOTAL_MEMORY = NODES * MEMORY
 THEORETICAL_PEAK_64 = (7.8 * 10 ** 12) * NODES
@@ -72,8 +72,8 @@ def run_torch(ns, dtype=None):
 
 
 if __name__ == "__main__":
-    ns = [1024, 2048, 4096, 8192, 16384] # This is waht single node can handle
-    ns_big = ns + [32768]
+    ns_big = [1000, 10000, 100000, 1000000] # This is waht single node can handle
+    # ns_big = ns + [32768]
     # run_nums("gpu-intra", "matmul", ns_big)
     # run_cupy("matmul", ns)
     # ns = [1 * 10 ** 8, 2 * 10 ** 8, 3 * 10 ** 8, 4 * 10 ** 8, 5 * 10 ** 8]

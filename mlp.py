@@ -10,7 +10,7 @@ import csv
 from tqdm import tqdm
 
 settings.device_grid_name = "packed"
-settings.backend_name = "gpu"
+settings.backend_name = "gpu-intra"
 # nums.init()
 
 # rand_arr1 = nps.random.rand(100, 100)
@@ -326,7 +326,7 @@ def run_test(n):
     main(n)    
 
 if __name__ == "__main__":
-    ns = [100, 1000, 10000, 100000]
+    ns = [100, 1000, 10000, 100000, 1000000]
     for n in ns:
         run_test(n)
 
